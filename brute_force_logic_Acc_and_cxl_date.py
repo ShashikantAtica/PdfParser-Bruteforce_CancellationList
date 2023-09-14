@@ -1,9 +1,10 @@
 from PyPDF2 import PdfReader
-
+import json
+import datetime
 # def acc_cxldate_puller(str):
 
 if __name__ == '__main__':
-    reader = PdfReader("report_1P.pdf")
+    reader = PdfReader("report_4p.pdf")
 
     #These two lists will be storing account number and cancellation date
     account=list()
@@ -14,7 +15,7 @@ if __name__ == '__main__':
 
         # print(type(textt))
         textt = textt.replace("\n", " ")
-        print(textt)
+        # print(textt)
         
         flag=0
 
@@ -46,11 +47,40 @@ if __name__ == '__main__':
         #To remove the extra one date coming through footer/description of EVERY page        
         cxl_date.pop()
     
+
     if(len(account)!=len(cxl_date)):
         print("Data is mismatched")
             
     print("Total number of cancellation", len(account))
 
+    #changing format of date
     for idx in range(0, len(cxl_date)):
-        print(account[idx], cxl_date[idx])
+        temp_date=""
+        n=len(cxl_date[idx])
+        if(n==8):
+            temp_date="20"+cxl_date[idx][n-2:n]+"-"+cxl_date[idx][0:2]+"-"+cxl_date[idx][3:5]
+        if(n==6):
+            temp_date="20"+cxl_date[idx][n-2:n]+"-0"+cxl_date[idx][0:1]+"-0"+cxl_date[idx][2:3]
+        if(n==7 and cxl_date[idx][1]=='/'):
+            temp_date="20"+cxl_date[idx][n-2:n]+"-0"+cxl_date[idx][0:1]+"-"+cxl_date[idx][2:4]
+        if(n==7 and cxl_date[idx][2]=='/'):
+            temp_date="20"+cxl_date[idx][n-2:n]+"-"+cxl_date[idx][0:2]+"-"+cxl_date[idx][3:4]
+        cxl_date[idx]=temp_date
+            
+
+
+    # Json data for Account and cancellation date :
+    data_dic=dict()
+    data_dic={"data":[]}
+    for idx in range(0, len(cxl_date)):
+        temp_dic={"Account":account[idx],"CxlDate":cxl_date[idx]}
+        data_dic["data"].append(temp_dic)
+
+    json_data=json.dumps(data_dic)
+    print(json_data)
+
+# // yyyy-mm-dd 2023-09-01
+
+    # for idx in range(0, len(cxl_date)):
+    #     print(account[idx], cxl_date[idx])
     
