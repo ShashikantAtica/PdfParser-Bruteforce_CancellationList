@@ -1,21 +1,16 @@
 from PyPDF2 import PdfReader
 import json
-import datetime
-# def acc_cxldate_puller(str):
 
 if __name__ == '__main__':
-    reader = PdfReader("report_4p.pdf")
+    reader = PdfReader("report_1p.pdf")
 
     #These two lists will be storing account number and cancellation date
     account=list()
     cxl_date=list()
     for page in reader.pages:
-    # page = reader.pages[0]
-        textt=page.extract_text()
 
-        # print(type(textt))
+        textt=page.extract_text()
         textt = textt.replace("\n", " ")
-        # print(textt)
         
         flag=0
 
@@ -35,7 +30,6 @@ if __name__ == '__main__':
                     else:
                         cxl_date.append(textt[idx-1:idx+5])
                 flag=flag^1
-                # print(flag)
             elif((textt[idx]=='/' and textt[idx+3]=='/')):
                 if(flag==1 ):
                     if(textt[idx-2].isnumeric()):
@@ -43,7 +37,6 @@ if __name__ == '__main__':
                     else:
                         cxl_date.append(textt[idx-1:idx+6])
                 flag=flag^1
-                # print(flag)
         #To remove the extra one date coming through footer/description of EVERY page        
         cxl_date.pop()
     
@@ -80,7 +73,4 @@ if __name__ == '__main__':
     print(json_data)
 
 # // yyyy-mm-dd 2023-09-01
-
-    # for idx in range(0, len(cxl_date)):
-    #     print(account[idx], cxl_date[idx])
     
